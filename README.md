@@ -30,7 +30,7 @@ A minimalist desktop clock widget for Windows that displays the current day and 
 ### Option 2: Build from Source
 1. Clone this repository
    ```bash
-   git clone https://github.com/YOUR_USERNAME/MondClock_Widget.git
+   git clone https://github.com/rupeshpandith/MondClock_Widget.git
    ```
 2. Open `MondClock.sln` in Visual Studio
 3. Select **Release** configuration and **x64** platform
