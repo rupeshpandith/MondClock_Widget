@@ -1,0 +1,49 @@
+MondClock — Quick User Guide
+1. What this is:
+MondClock is a desktop clock widget that lives directly on your desktop.
+No installer
+No internet
+No background apps
+One single .exe file
+It starts automatically and stays quietly on the desktop.
+
+2. How to run it (first time)
+	1. Double-click MondClock.exe
+	2. The clock appears on the desktop
+	3. That’s it — it’s running
+⚠️ If Windows shows a security popup:
+Click More info
+Click Run anyway
+This is normal for personal desktop tools.
+
+3. How to move the clock
+	1. Left-click and drag the clock
+	2. Release to place it
+	3. The position is saved automatically
+	4. After restart, it appears in the same place.
+
+4. How to open settings panel
+	1. Right-click on the clock text
+	2. A small control panel opens next to the clock
+	3. If you click anywhere else, the panel closes automatically.
+
+5. Settings panel controls
+Inside the panel you can:
+	1. Small / Medium / Large: Change the size of the clock
+	2. Theme: Toggle between light and dark text
+	3. Exit: Completely close the app
+
+6. How to stop the app
+Use Exit in the panel or Close it from Task Manager → MondClock.exe
+
+7. Important behaviour to know: 
+Only one clock can run at a time
+Running the file again won’t create duplicates
+It does not appear in taskbar
+It does not appear in system tray
+It uses almost no system resources
+
+8. How to remove it completely
+Close the app (Exit)
+Delete MondClock.exe
+Nothing else is installed.

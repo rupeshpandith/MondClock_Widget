@@ -1,0 +1,30 @@
+# Build outputs
+x64/
+Debug/
+Release/
+MondClock/x64/
+
+# Compiled files
+*.exe
+*.obj
+*.pdb
+*.ilk
+*.iobj
+*.ipdb
+*.res
+*.log
+*.tlog
+*.recipe
+
+# User-specific files
+*.user
+*.suo
+*.sdf
+*.opensdf
+*.VC.db
+*.VC.opendb
+.vs/
+
+# Config files (user settings)
+*.dat
+*.pos
