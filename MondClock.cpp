@@ -102,7 +102,7 @@ void LoadSettings(POINT& pos)
         pos.y = 200;
 }
 
-int GetWindowWidth() { return 170 * g_scale; }
+int GetWindowWidth() { return 255 * g_scale; }
 int GetWindowHeight() { return 65 * g_scale; }
 
 // Forward declaration
