@@ -47,6 +47,86 @@ HWND GetDesktopWorkerW()
     return workerw;
 }
 
+// ================= STARTUP REGISTRY =================
+bool AddToStartup()
+{
+    wchar_t exePath[MAX_PATH];
+    GetModuleFileNameW(nullptr, exePath, MAX_PATH);
+
+    // Wrap path in quotes to handle spaces
+    std::wstring quotedPath = L"\"" + std::wstring(exePath) + L"\"";
+
+    HKEY hKey;
+    LONG result = RegOpenKeyExW(
+        HKEY_CURRENT_USER,
+        L"Software\\Microsoft\\Windows\\CurrentVersion\\Run",
+        0,
+        KEY_SET_VALUE,
+        &hKey
+    );
+
+    if (result == ERROR_SUCCESS)
+    {
+        result = RegSetValueExW(
+            hKey,
+            L"MondClock",
+            0,
+            REG_SZ,
+            (BYTE*)quotedPath.c_str(),
+            (DWORD)((quotedPath.length() + 1) * sizeof(wchar_t))
+        );
+
+        RegCloseKey(hKey);
+        return (result == ERROR_SUCCESS);
+    }
+
+    return false;
+}
+
+bool IsInStartup()
+{
+    HKEY hKey;
+    LONG result = RegOpenKeyExW(
+        HKEY_CURRENT_USER,
+        L"Software\\Microsoft\\Windows\\CurrentVersion\\Run",
+        0,
+        KEY_QUERY_VALUE,
+        &hKey
+    );
+
+    if (result == ERROR_SUCCESS)
+    {
+        wchar_t value[MAX_PATH];
+        DWORD size = sizeof(value);
+        result = RegQueryValueExW(hKey, L"MondClock", nullptr, nullptr, (BYTE*)value, &size);
+        RegCloseKey(hKey);
+        return (result == ERROR_SUCCESS);
+    }
+
+    return false;
+}
+
+bool RemoveFromStartup()
+{
+    HKEY hKey;
+    LONG result = RegOpenKeyExW(
+        HKEY_CURRENT_USER,
+        L"Software\\Microsoft\\Windows\\CurrentVersion\\Run",
+        0,
+        KEY_SET_VALUE,
+        &hKey
+    );
+
+    if (result == ERROR_SUCCESS)
+    {
+        result = RegDeleteValueW(hKey, L"MondClock");
+        RegCloseKey(hKey);
+        return (result == ERROR_SUCCESS);
+    }
+
+    return false;
+}
+
 // ================= UTIL =================
 std::wstring GetConfigPath()
 {
@@ -236,6 +316,15 @@ LRESULT CALLBACK PanelProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                 g_isExiting = true;
                 DestroyWindow(g_hwnd);
                 return 0;
+            case 6:  // Toggle Startup
+                if (IsInStartup())
+                    RemoveFromStartup();
+                else
+                    AddToStartup();
+                // Recreate panel to update button text
+                DestroyControlPanel();
+                CreateControlPanel();
+                return 0;
             }
             RecreateFonts();
             RecreateClockWindow();  // Recreate window to fix ghosting
@@ -307,14 +396,16 @@ void CreateControlPanel()
     HWND b3 = CreateWindowW(L"BUTTON", L"Large", WS_CHILD | WS_VISIBLE | WS_TABSTOP | BS_PUSHBUTTON, 10, 46, 75, 28, g_panel, (HMENU)3, g_hInst, nullptr);
     HWND b4 = CreateWindowW(L"BUTTON", L"Theme", WS_CHILD | WS_VISIBLE | WS_TABSTOP | BS_PUSHBUTTON, 95, 46, 75, 28, g_panel, (HMENU)4, g_hInst, nullptr);
 
-    // Row 3: Exit (centered, full width)
-    HWND b5 = CreateWindowW(L"BUTTON", L"Exit", WS_CHILD | WS_VISIBLE | WS_TABSTOP | BS_PUSHBUTTON, 10, 82, 160, 28, g_panel, (HMENU)5, g_hInst, nullptr);
+    // Row 3: Startup toggle, Exit
+    HWND b5 = CreateWindowW(L"BUTTON", IsInStartup() ? L"Startup: ON" : L"Startup: OFF", WS_CHILD | WS_VISIBLE | WS_TABSTOP | BS_PUSHBUTTON, 10, 82, 110, 28, g_panel, (HMENU)6, g_hInst, nullptr);
+    HWND b6 = CreateWindowW(L"BUTTON", L"Exit", WS_CHILD | WS_VISIBLE | WS_TABSTOP | BS_PUSHBUTTON, 130, 82, 45, 28, g_panel, (HMENU)5, g_hInst, nullptr);
 
     SendMessage(b1, WM_SETFONT, (WPARAM)hFontUI, TRUE);
     SendMessage(b2, WM_SETFONT, (WPARAM)hFontUI, TRUE);
     SendMessage(b3, WM_SETFONT, (WPARAM)hFontUI, TRUE);
     SendMessage(b4, WM_SETFONT, (WPARAM)hFontUI, TRUE);
     SendMessage(b5, WM_SETFONT, (WPARAM)hFontUI, TRUE);
+    SendMessage(b6, WM_SETFONT, (WPARAM)hFontUI, TRUE);
 }
 
 void DestroyControlPanel()
@@ -454,6 +545,12 @@ int WINAPI WinMain(_In_ HINSTANCE hInst, _In_opt_ HINSTANCE hPrevInstance, _In_ 
 
     g_hInst = hInst;
     SetProcessDPIAware();
+
+    // Automatically add to startup if not already there
+    if (!IsInStartup())
+    {
+        AddToStartup();
+    }
 
     POINT pos;
     LoadSettings(pos);
