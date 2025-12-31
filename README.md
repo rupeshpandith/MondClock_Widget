@@ -53,6 +53,7 @@ A minimalist desktop clock widget for Windows that displays the current day and 
 | **Large** | Set widget to large size (scale 4x) |
 | **Theme** | Toggle between dark and light text |
 | **Exit** | Close the widget |
+| **Startup** | ON/OFF Auto Startup |
 
 *Click anywhere outside the settings panel to close it.*
 
